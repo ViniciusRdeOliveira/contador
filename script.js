@@ -30,22 +30,26 @@
     if (!isNaN(t)) urlEnd = t;
   }
   var cleanMode = params.get('limpo') === '1' || params.get('limpo') === 'true';
-  var usingUrl = urlTitle !== null || urlEnd !== null;
+
+  function urlNum(name) {
+    var v = params.get(name);
+    if (v === null) return null;
+    v = parseInt(v, 10);
+    return isNaN(v) || v < 0 ? 0 : v;
+  }
 
   var cfg = load();
-  if (urlTitle !== null) cfg.title = urlTitle;      // URL tem prioridade sobre o salvo
-  if (urlEnd !== null) cfg.endAt = urlEnd;          // (não é gravado no localStorage)
+  // A URL tem prioridade sobre os valores salvos no navegador
+  if (urlTitle !== null) cfg.title = urlTitle;
+  if (urlEnd !== null) cfg.endAt = urlEnd;
+  if (urlNum('dias') !== null) cfg.days = urlNum('dias');
+  if (urlNum('horas') !== null) cfg.hours = urlNum('horas');
+  if (urlNum('minutos') !== null) cfg.minutes = urlNum('minutos');
 
   if (cfg.title) inTitle.value = cfg.title;
   if (cfg.days != null) inDays.value = cfg.days;
   if (cfg.hours != null) inHours.value = cfg.hours;
   if (cfg.minutes != null) inMinutes.value = cfg.minutes;
-
-  if (usingUrl) {
-    $('hint').textContent =
-      'Configuração vinda do link. Ao editar ou iniciar uma nova contagem aqui, ' +
-      'o link é ignorado e os valores passam a ficar salvos neste navegador.';
-  }
 
   /* ---------- Helpers ---------- */
   function num(el) {
@@ -54,23 +58,37 @@
   }
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
-  function leaveUrlMode() {
-    if (!usingUrl) return;
-    usingUrl = false;
-    history.replaceState(null, '', location.pathname);
+  function toLocalIso(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+           'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+
+  /* Reflete a configuração atual nos parâmetros da URL (sem recarregar).
+     Mantém outros parâmetros existentes, como limpo=1. */
+  function syncUrl() {
+    try {
+      var q = new URLSearchParams(location.search);
+      if (cfg.title) q.set('titulo', cfg.title); else q.delete('titulo');
+      q.set('dias', cfg.days || 0);
+      q.set('horas', cfg.hours || 0);
+      q.set('minutos', cfg.minutes || 0);
+      if (cfg.endAt) q.set('fim', toLocalIso(cfg.endAt)); else q.delete('fim');
+      history.replaceState(null, '', location.pathname + '?' + q.toString());
+    } catch (e) {}
   }
 
   /* ---------- Eventos dos campos ---------- */
   function persistFields() {
-    leaveUrlMode();
     var c = load();
     c.title = inTitle.value.trim();
     c.days = num(inDays);
     c.hours = num(inHours);
     c.minutes = num(inMinutes);
-    if (cfg.endAt && !c.endAt) c.endAt = cfg.endAt;
+    if (cfg.endAt) c.endAt = cfg.endAt;
     save(c);
     cfg = c;
+    syncUrl();
     render();
   }
   [inTitle, inDays, inHours, inMinutes].forEach(function (el) {
@@ -78,7 +96,6 @@
   });
 
   $('btnApply').addEventListener('click', function () {
-    leaveUrlMode();
     var c = {
       title: inTitle.value.trim(),
       days: num(inDays), hours: num(inHours), minutes: num(inMinutes)
@@ -87,6 +104,7 @@
     c.endAt = Date.now() + ms;
     save(c);
     cfg = c;
+    syncUrl();
     render();
   });
 
