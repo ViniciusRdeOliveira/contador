@@ -74,6 +74,18 @@ button:hover { background: #1f4b86; }
 button:active { transform: scale(.98); }
 .hint { font-size: .72rem; color: var(--muted); line-height: 1.4; }
 
+/* Botão para ocultar/mostrar os campos em tela */
+.toggle {
+  position: fixed; top: 10px; right: 10px; z-index: 10;
+  padding: 7px 12px; font-size: .75rem;
+  background: rgba(5, 7, 11, .7); color: var(--muted);
+  border: 1px solid var(--blue); opacity: .55;
+  transition: opacity .2s, background .2s, color .2s;
+}
+.toggle:hover, .toggle:focus-visible { opacity: 1; color: #fff; background: rgba(24, 58, 104, .8); }
+body.hide-panel .panel { display: none; }
+body.fs .toggle { display: none; }
+
 /* ===== Exibição ===== */
 .display { text-align: center; width: 100%; max-width: 100%; }
 

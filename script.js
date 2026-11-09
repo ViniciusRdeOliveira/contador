@@ -90,6 +90,23 @@
     render();
   });
 
+  /* ---------- Ocultar/mostrar campos em tela ---------- */
+  var HIDE_KEY = 'contador_campos_ocultos_v1';
+  var btnToggle = $('btnToggle');
+
+  function setPanelHidden(hidden) {
+    document.body.classList.toggle('hide-panel', hidden);
+    btnToggle.textContent = hidden ? 'Mostrar campos' : 'Ocultar campos';
+    btnToggle.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+    try { localStorage.setItem(HIDE_KEY, hidden ? '1' : '0'); } catch (e) {}
+  }
+  btnToggle.addEventListener('click', function () {
+    setPanelHidden(!document.body.classList.contains('hide-panel'));
+  });
+  var savedHidden = false;
+  try { savedHidden = localStorage.getItem(HIDE_KEY) === '1'; } catch (e) {}
+  setPanelHidden(savedHidden);
+
   /* ---------- Modo F11 ---------- */
   function isFullscreen() {
     return cleanMode ||
