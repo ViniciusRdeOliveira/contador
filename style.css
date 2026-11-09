@@ -1,0 +1,160 @@
+/* ===== Variáveis ===== */
+:root {
+  --bg: #05070b;
+  --blue: #183a68;
+  --blue-light: #2f6bb8;
+  --text: #e8eef7;
+  --muted: #7f93ad;
+
+  /* Tamanho dos dígitos: acompanha a MENOR dimensão disponível,
+     para funcionar em tela dividida, TV, painéis e celulares. */
+  --digit-size: clamp(1.4rem, min(8.4vw, 17vh), 14rem);
+  --title-size: clamp(1rem, min(5vw, 8vh), 6rem);
+  --label-size: clamp(.5rem, min(1.6vw, 2.6vh), 1.6rem);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { min-height: 100%; }
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(24, 58, 104, .45), transparent 60%),
+    linear-gradient(rgba(24, 58, 104, .12) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(24, 58, 104, .12) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 3vh, 36px);
+  padding: clamp(8px, 2vmin, 24px);
+}
+
+/* ===== Painel de configuração ===== */
+.panel {
+  width: min(720px, 100%);
+  background: rgba(10, 14, 22, .85);
+  border: 1px solid var(--blue);
+  border-radius: 14px;
+  padding: clamp(12px, 2.5vmin, 22px);
+  box-shadow: 0 0 30px rgba(24, 58, 104, .35);
+  display: grid;
+  gap: 14px;
+}
+.panel h2 {
+  font-size: .8rem; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
+label {
+  display: block; font-size: .72rem; color: var(--muted);
+  margin-bottom: 6px; letter-spacing: .08em; text-transform: uppercase;
+}
+input {
+  width: 100%; background: #000; color: var(--text);
+  border: 1px solid var(--blue); border-radius: 8px;
+  padding: 10px 12px; font-size: 1rem; font-family: inherit;
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+input:focus { border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(47, 107, 184, .25); }
+.time-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions button { flex: 1 1 200px; }
+button {
+  background: var(--blue); color: #fff; border: 1px solid var(--blue-light);
+  border-radius: 8px; padding: 11px 16px; font-size: .9rem; font-weight: 600;
+  cursor: pointer; letter-spacing: .04em; font-family: inherit;
+  transition: background .2s, transform .1s;
+}
+button:hover { background: #1f4b86; }
+button:active { transform: scale(.98); }
+.hint { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+
+/* ===== Exibição ===== */
+.display { text-align: center; width: 100%; max-width: 100%; }
+
+.title {
+  font-size: var(--title-size);
+  font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  margin-bottom: clamp(8px, 3vh, 28px);
+  text-shadow: 0 0 22px rgba(47, 107, 184, .6);
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+
+.clock {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: clamp(3px, .8vw, 16px);
+}
+.unit { display: flex; flex-direction: column; align-items: center; gap: .4em; }
+
+.digits {
+  font-family: "SF Mono", Consolas, "Courier New", monospace;
+  font-size: var(--digit-size);
+  font-weight: 700; line-height: 1;
+  padding: .16em .2em; min-width: 1.5em;
+  background: linear-gradient(180deg, #0b1424, #000);
+  border: 1px solid var(--blue); border-radius: .14em;
+  box-shadow: inset 0 0 18px rgba(24, 58, 104, .6), 0 0 22px rgba(24, 58, 104, .4);
+  font-variant-numeric: tabular-nums;
+}
+.lbl {
+  font-size: var(--label-size);
+  letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+}
+
+/* Separador ":" piscando (animação de relógio) */
+.sep {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: var(--digit-size);
+  font-weight: 700; line-height: 1;
+  padding-top: .16em; color: var(--blue-light);
+  animation: blink 1s steps(1, end) infinite;
+}
+@keyframes blink {
+  0%, 50%       { opacity: 1; }
+  50.01%, 100%  { opacity: .1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sep { animation-duration: 2s; }
+}
+
+.ended {
+  display: none; margin-top: 2vh; color: var(--blue-light);
+  letter-spacing: .3em; text-transform: uppercase;
+  font-size: var(--label-size);
+}
+
+/* ===== Modo F11 / ?limpo=1: apenas título e contador ===== */
+body.fs { overflow: hidden; height: 100vh; height: 100dvh; padding: 2vmin; }
+body.fs .panel { display: none; }
+body.fs {
+  --digit-size: clamp(1.6rem, min(9.5vw, 28vh), 24rem);
+  --title-size: clamp(1.2rem, min(6vw, 12vh), 10rem);
+  --label-size: clamp(.6rem, min(1.8vw, 3.5vh), 3rem);
+}
+
+/* ===== Telas dividida / estreitas ===== */
+@media (max-width: 520px) {
+  .time-row { grid-template-columns: 1fr; }
+  .clock { gap: 2px; }
+  .lbl { letter-spacing: .08em; }
+}
+
+/* Alturas muito baixas (janelas divididas na horizontal, faixas de painel) */
+@media (max-height: 420px) {
+  body { justify-content: flex-start; }
+  body.fs { justify-content: center; }
+  .panel { gap: 8px; padding: 10px; }
+  .hint { display: none; }
+  .time-row, .actions { gap: 6px; }
+}
+
+/* TVs e telas muito grandes (4K / painéis) */
+@media (min-width: 2200px) {
+  :root { --digit-size: clamp(1.4rem, min(8.4vw, 17vh), 22rem); }
+}

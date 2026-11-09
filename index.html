@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contador Regressivo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="panel" id="panel">
+  <h2>Configurar contador</h2>
+
+  <div>
+    <label for="inTitle">Título (exibido em tela cheia / F11)</label>
+    <input type="text" id="inTitle" placeholder="Ex.: Black Friday" maxlength="80">
+  </div>
+
+  <div>
+    <label>Tempo a contar</label>
+    <div class="time-row">
+      <input type="number" id="inDays" min="0" placeholder="Dias" aria-label="Dias" value="0">
+      <input type="number" id="inHours" min="0" placeholder="Horas" aria-label="Horas" value="0">
+      <input type="number" id="inMinutes" min="0" placeholder="Minutos" aria-label="Minutos" value="0">
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="btnApply" type="button">Iniciar / reiniciar contagem</button>
+  </div>
+
+  <p class="hint" id="hint">
+    Os valores ficam salvos neste navegador. F11 exibe somente título e contador.
+    A página atualiza sozinha a cada minuto.
+  </p>
+</section>
+
+<main class="display">
+  <h1 class="title" id="title">Contador Regressivo</h1>
+  <div class="clock" role="timer" aria-live="off">
+    <div class="unit"><div class="digits" id="d">00</div><span class="lbl">Dias</span></div>
+    <div class="sep" aria-hidden="true">:</div>
+    <div class="unit"><div class="digits" id="h">00</div><span class="lbl">Horas</span></div>
+    <div class="sep" aria-hidden="true">:</div>
+    <div class="unit"><div class="digits" id="m">00</div><span class="lbl">Minutos</span></div>
+    <div class="sep" aria-hidden="true">:</div>
+    <div class="unit"><div class="digits" id="s">00</div><span class="lbl">Segundos</span></div>
+  </div>
+  <div class="ended" id="ended">Contagem encerrada</div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
